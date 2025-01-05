@@ -70,7 +70,6 @@ def render_md_string(papers_dict):
     output_string += f"## Paper selection prompt\n{criterion}"
     return output_string
 
-
 if __name__ == "__main__":
     # parse output.json into a dict
     with open("out/output.json", "r") as f:
