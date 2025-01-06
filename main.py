@@ -254,8 +254,9 @@ if __name__ == "__main__":
         if config["OUTPUT"].getboolean("dump_md"):
             with open(config["OUTPUT"]["output_path"] + "output.md", "w") as f:
                 f.write(render_md_string(selected_papers))
-
-        if len(selected_papers)>0:
+        
+        # push to target emails
+        if len(selected_papers)>0 and config["EMAIL"].getboolean("push_to_email"):
             email = config["EMAIL"]
             sender_email = email['send_email']        # sender email
             sender_password = os.environ.get("EMAIL_KEY") # sender passwd
