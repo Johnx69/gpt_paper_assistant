@@ -90,7 +90,7 @@ if __name__ == "__main__":
         recipient_email_list = ["yifanli183313@gmail.com", "lichili233@gmail.com", "ztan36@asu.edu"] 
 
         today_str = datetime.today().strftime("%Y_%m%d")
-        subject = f"Daily ArXiv: {datetime.today().strftime("%m/%d/%Y")}"
+        subject = f"Daily ArXiv: {datetime.today().strftime('%m/%d/%Y')}"
         paper_len = len(output)
 
         title_authors = ''
