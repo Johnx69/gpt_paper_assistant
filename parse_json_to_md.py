@@ -85,8 +85,7 @@ if __name__ == "__main__":
 
     if len(output)!=0:
         sender_email = "yifanli183313@gmail.com"        # sender email
-        # sender_password = os.environ.get("EMAIL_KEY") # sender passwd
-        sender_password = "cjhg mcdy sgke ajxm" # sender passwd
+        sender_password = os.environ.get("EMAIL_KEY") # sender passwd
         recipient_email_list = ["yifanli183313@gmail.com", "lichili233@gmail.com", "ztan36@asu.edu"] 
 
         today_str = datetime.today().strftime("%Y_%m%d")
