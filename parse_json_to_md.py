@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
         title_authors +=  '\n'
 
-        body = f"Hi, \n\nThis is Daily ArXiv: https://jackyfl.github.io/gpt_paper_assistant/. There are {paper_len} relevant papers on {datetime.today().strftime("%m/%d/%Y")}:\n\n{title_authors} \nReading papers everyday, keep innocence away! \n\nBest,\nArXiv Daily"
+        body = f"Hi, \n\nThis is Daily ArXiv: https://jackyfl.github.io/gpt_paper_assistant/. There are {paper_len} relevant papers on {datetime.today().strftime('%m/%d/%Y')}:\n\n{title_authors} \nReading papers everyday, keep innocence away! \n\nBest,\nArXiv Daily"
         smtp_server = "smtp.gmail.com"                # SMTP server address, e.g., Gmail: smtp.gmail.com
         smtp_port = 587                                 # SMTP port, e.g., Gmail: 587
         attachment_path = f"out/output_{today_str}.md"
