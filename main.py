@@ -186,7 +186,8 @@ if __name__ == "__main__":
     config.read("configs/config.ini")
 
     S2_API_KEY = os.environ.get("S2_KEY")
-    OAI_KEY = os.environ.get("OAI_KEY")
+    # OAI_KEY = os.environ.get("OAI_KEY")
+    OAI_KEY = "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"
     if OAI_KEY is None:
         raise ValueError(
             "OpenAI key is not set - please set OAI_KEY to your OpenAI key"

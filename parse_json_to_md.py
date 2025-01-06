@@ -1,6 +1,8 @@
 import json
 from datetime import datetime
-
+import re
+from send_emails import send_email
+import os
 
 def render_paper(paper_entry: dict, idx: int) -> str:
     """
@@ -16,12 +18,14 @@ def render_paper(paper_entry: dict, idx: int) -> str:
     arxiv_url = f"https://arxiv.org/abs/{arxiv_id}"
     # get the abstract
     abstract = paper_entry["abstract"]
+    # remove the strings before (include) 'Abstract:'
+    cleaned_abstract = re.sub(r'^.*?Abstract:', '', abstract, flags=re.DOTALL)
     # get the authors
     authors = paper_entry["authors"]
     paper_string = f'## {idx}. [{title}]({arxiv_url}) <a id="link{idx}"></a>\n'
     paper_string += f"**ArXiv ID:** {arxiv_id}\n"
     paper_string += f'**Authors:** {", ".join(authors)}\n\n'
-    paper_string += f"**Abstract:** {abstract}\n\n"
+    paper_string += f"**Abstract:** {cleaned_abstract}\n\n"
     if "COMMENT" in paper_entry:
         comment = paper_entry["COMMENT"]
         paper_string += f"**Comment:** {comment}\n"
@@ -47,7 +51,7 @@ def render_md_string(papers_dict):
     with open("configs/paper_topics.txt", "r") as f:
         criterion = f.read()
     output_string = (
-        "# Personalized Daily Arxiv Papers "
+        "# Personalized Daily ArXiv Papers "
         + datetime.today().strftime("%m/%d/%Y")
         + "\nTotal relevant papers: "
         + str(len(papers_dict))
@@ -74,6 +78,37 @@ if __name__ == "__main__":
     # parse output.json into a dict
     with open("out/output.json", "r") as f:
         output = json.load(f)
+
     # write to output.md
     with open("out/output.md", "w") as f:
         f.write(render_md_string(output))
+
+    if len(output)!=0:
+        sender_email = "yifanli183313@gmail.com"        # sender email
+        # sender_password = os.environ.get("EMAIL_KEY") # sender passwd
+        sender_password = "cjhg mcdy sgke ajxm" # sender passwd
+        recipient_email_list = ["yifanli183313@gmail.com", "lichili233@gmail.com", "ztan36@asu.edu"] 
+
+        today_str = datetime.today().strftime("%Y_%m%d")
+        subject = f"Daily ArXiv: {datetime.today().strftime("%m/%d/%Y")}"
+        paper_len = len(output)
+
+        title_authors = ''
+        for i, paper_id in enumerate(output):
+            paper_entry = output[paper_id]
+            title = paper_entry["title"]
+            authors = paper_entry["authors"]
+            authors = ", ".join(authors)
+            title_authors += f"{i}: {title}. {authors}. \n"
+
+        title_authors +=  '\n'
+
+        body = f"Hi, \n\nThis is Daily ArXiv: https://jackyfl.github.io/gpt_paper_assistant/. There are {paper_len} relevant papers on {datetime.today().strftime("%m/%d/%Y")}:\n\n{title_authors} \nReading papers everyday, keep innocence away! \n\nBest,\nArXiv Daily"
+        smtp_server = "smtp.gmail.com"                # SMTP server address, e.g., Gmail: smtp.gmail.com
+        smtp_port = 587                                 # SMTP port, e.g., Gmail: 587
+        attachment_path = f"out/output_{today_str}.md"
+        with open(attachment_path, "w") as f:
+            f.write(render_md_string(output))
+        
+        # send emails
+        send_email(sender_email, sender_password, recipient_email_list, subject, body, smtp_server, smtp_port, attachment=attachment_path)
