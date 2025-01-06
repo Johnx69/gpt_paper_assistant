@@ -1,8 +1,6 @@
 import json
 from datetime import datetime
 import re
-from send_emails import send_email
-import os
 
 def render_paper(paper_entry: dict, idx: int) -> str:
     """
@@ -83,10 +81,18 @@ if __name__ == "__main__":
     with open("out/output.md", "w") as f:
         f.write(render_md_string(output))
 
+    import configparser
+    import os
+    from send_emails import send_email
+    from datetime import datetime
+
+    config = configparser.ConfigParser()
+    config.read("configs/config.ini")
     if len(output)!=0:
-        sender_email = "yifanli183313@gmail.com"        # sender email
+        email = config["EMAIL"]
+        sender_email = email['send_email']        # sender email
         sender_password = os.environ.get("EMAIL_KEY") # sender passwd
-        recipient_email_list = ["yifanli183313@gmail.com", "lichili233@gmail.com", "ztan36@asu.edu"] 
+        recipient_email_list = email['receve_emails'].split(', ')
 
         today_str = datetime.today().strftime("%Y_%m%d")
         subject = f"Daily ArXiv: {datetime.today().strftime('%m/%d/%Y')}"
