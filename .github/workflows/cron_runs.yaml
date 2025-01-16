@@ -3,7 +3,7 @@ name: Run daily arxiv
 on:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron: "0 15 * * *"
+    - cron: "0 13 * * *"
   workflow_dispatch:
 
 permissions:
@@ -31,7 +31,7 @@ jobs:
         run: |
           python main.py
       - name: Upload results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: arxiv-scanner-outputs
           path: out/
