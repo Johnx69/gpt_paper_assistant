@@ -7,17 +7,18 @@ on:
   workflow_dispatch:
   
 
-permissions:
-  contents: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     steps:
     - uses: actions/checkout@v4
       with:
         persist-credentials: false # forbid id credentials
+        
     - name: Set up Python 3.10
       uses: actions/setup-python@v4
       with:
@@ -42,7 +43,8 @@ jobs:
       run: |
         git add .
         git commit -m "Auto-generated file update" || echo "No changes to commit"
-        git push origin main
+        # git push origin main
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
     - name: Upload results
       uses: actions/upload-artifact@v4
       with:
