@@ -254,37 +254,6 @@ if __name__ == "__main__":
         if config["OUTPUT"].getboolean("dump_md"):
             with open(config["OUTPUT"]["output_path"] + "output.md", "w") as f:
                 f.write(render_md_string(selected_papers))
-        
-        # push to target emails
-        if len(selected_papers)>0 and config["EMAIL"].getboolean("push_to_email"):
-            email = config["EMAIL"]
-            sender_email = email['send_email']        # sender email
-            sender_password = os.environ.get("EMAIL_KEY") # sender passwd
-            recipient_email_list = email['receve_emails'].split(', ')
-
-            today_str = datetime.today().strftime("%Y_%m%d")
-            subject = f"Daily ArXiv: {datetime.today().strftime('%m/%d/%Y')}"
-            paper_len = len(selected_papers)
-
-            title_authors = ''
-            for i, paper_id in enumerate(selected_papers):
-                paper_entry = selected_papers[paper_id]
-                title = paper_entry["title"]
-                authors = paper_entry["authors"]
-                authors = ", ".join(authors)
-                title_authors += f"{i}: {title}. {authors}. \n"
-
-            title_authors +=  '\n'
-
-            body = f"Hi, \n\nThis is Daily ArXiv: https://jackyfl.github.io/gpt_paper_assistant/. There are {paper_len} relevant papers on {datetime.today().strftime('%m/%d/%Y')}:\n\n{title_authors} \nReading papers everyday, keep innocence away! \n\nBest,\nDaily ArXiv"
-            smtp_server = "smtp.gmail.com"                # SMTP server address, e.g., Gmail: smtp.gmail.com
-            smtp_port = 587                                 # SMTP port, e.g., Gmail: 587
-            attachment_path = f"out/output_{today_str}.md"
-            with open(attachment_path, "w") as f:
-                f.write(render_md_string(selected_papers))
-            
-            # send emails
-            send_email(sender_email, sender_password, recipient_email_list, subject, body, smtp_server, smtp_port, attachment=attachment_path)
 
         # only push to slack for non-empty dicts
         if config["OUTPUT"].getboolean("push_to_slack"):
