@@ -255,6 +255,11 @@ if __name__ == "__main__":
             with open(config["OUTPUT"]["output_path"] + "output.md", "w") as f:
                 f.write(render_md_string(selected_papers))
 
+        today_str = datetime.today().strftime("%Y_%m%d")
+        attachment_path = f"out/output_{today_str}.md"
+        with open(attachment_path, "w") as f:
+            f.write(render_md_string(selected_papers))
+        
         # only push to slack for non-empty dicts
         if config["OUTPUT"].getboolean("push_to_slack"):
             SLACK_KEY = os.environ.get("SLACK_KEY")
