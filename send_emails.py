@@ -74,7 +74,7 @@ if __name__ == "__main__":
     if os.path.exists(attachment_path):
         selected_papers = json.load(open("out/output.json"))
         # push to target emails
-        if (today_date==matched_date) and config["EMAIL"].getboolean("push_to_email"):
+        if config["EMAIL"].getboolean("push_to_email"):
             email = config["EMAIL"]
             sender_email = email['send_email']        # sender email
             sender_password = os.environ.get("EMAIL_KEY") # sender passwd
