@@ -5,6 +5,12 @@ from email.header import Header
 from email.mime.base import MIMEBase
 from email import encoders
 
+import os
+import re
+import json
+import configparser
+from datetime import datetime
+
 def send_email(sender_email, sender_password, recipient_emails, subject, body, smtp_server, smtp_port=587, attachment=None):
     """
     Function to send an email using SMTP, with support for multiple recipients and optional attachment.
@@ -57,3 +63,39 @@ def send_email(sender_email, sender_password, recipient_emails, subject, body, s
         print(f"Failed to send email: {e}")
     finally:
         server.quit()
+
+if __name__ == __main__:
+    config = configparser.ConfigParser()
+    config.read("configs/config.ini")
+
+    today_str = datetime.today().strftime("%Y_%m%d")
+    attachment_path = f"out/output_{today_str}.md"
+    
+    if os.path.exists(attachment_path):
+        selected_papers = json.load(open("out/output.json"))
+        # push to target emails
+        if (today_date==matched_date) and config["EMAIL"].getboolean("push_to_email"):
+            email = config["EMAIL"]
+            sender_email = email['send_email']        # sender email
+            sender_password = os.environ.get("EMAIL_KEY") # sender passwd
+            recipient_email_list = email['receve_emails'].split(', ')
+    
+            subject = f"Daily ArXiv: {datetime.today().strftime('%m/%d/%Y')}"
+            paper_len = len(selected_papers)
+    
+            title_authors = ''
+            for i, paper_id in enumerate(selected_papers):
+                paper_entry = selected_papers[paper_id]
+                title = paper_entry["title"]
+                authors = paper_entry["authors"]
+                authors = ", ".join(authors)
+                title_authors += f"{i}: {title}. {authors}. \n"
+    
+            title_authors +=  '\n'
+    
+            body = f"Hi, \n\nThis is Daily ArXiv: https://jackyfl.github.io/gpt_paper_assistant/. There are {paper_len} relevant papers on {datetime.today().strftime('%m/%d/%Y')}:\n\n{title_authors} \nReading papers everyday, keep innocence away! \n\nBest,\nDaily ArXiv"
+            smtp_server = "smtp.gmail.com"                # SMTP server address, e.g., Gmail: smtp.gmail.com
+            smtp_port = 587                                 # SMTP port, e.g., Gmail: 587
+
+            # send emails
+            send_email(sender_email, sender_password, recipient_email_list, subject, body, smtp_server, smtp_port, attachment=attachment_path)
