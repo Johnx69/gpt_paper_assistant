@@ -46,7 +46,7 @@ jobs:
         git commit -m "Auto-generated file update" || echo "No changes to commit"
         # git push origin main
         git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
-        python send_mails.py
+        python send_emails.py
         
     - name: Upload results
       uses: actions/upload-artifact@v4
