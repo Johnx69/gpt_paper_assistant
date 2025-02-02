@@ -28,12 +28,14 @@ def send_email(sender_email, sender_password, recipient_emails, subject, body, s
     try:
         # Create the email object
         message = MIMEMultipart()
-        message['From'] = Header(sender_email, 'utf-8')
-        message['To'] = Header(", ".join(recipient_emails), 'utf-8')  # Join recipient emails with commas
+        # message['From'] = Header(sender_email, 'utf-8')
+        message['From'] = f"Daily ArXiv <jackyfl@daily_arxiv.com>"
+        # message['To'] = Header(", ".join(recipient_emails), 'utf-8')  # Join recipient emails with commas
+        message['To'] = "Undisclosed Recipients"  # hideen the recipient emails
         message['Subject'] = Header(subject, 'utf-8')
 
         # Attach the email body
-        message.attach(MIMEText(body, 'plain', 'utf-8'))
+        message.attach(MIMEText(body, 'html', 'utf-8'))
 
         # If there is an attachment, add it
         if attachment:
@@ -89,11 +91,23 @@ if __name__ == "__main__":
                 title = paper_entry["title"]
                 authors = paper_entry["authors"]
                 authors = ", ".join(authors)
-                title_authors += f"{i}: {title}. {authors}. \n"
-    
-            title_authors +=  '\n'
-    
-            body = f"Hi, \n\nThis is Daily ArXiv: https://jackyfl.github.io/gpt_paper_assistant/. There are {paper_len} relevant papers on {datetime.today().strftime('%m/%d/%Y')}:\n\n{title_authors} \nReading papers everyday, keep innocence away! \n\nBest,\nDaily ArXiv"
+                title_authors += f"<p>{i}: <b>{title}</b>. {authors}. </p>"
+                
+            body = f"""
+            <html>
+                <body>
+                    <p>Hi,</p>
+                    <p><b>This is <a href="https://jackyfl.github.io/gpt_paper_assistant/"> Daily ArXiv</a>  😊😊😊 </b></p>
+                    <p>There are <b>{paper_len}</b> relevant papers on <b>{datetime.today().strftime('%m/%d/%Y')}</b> 👇👇👇:</p>
+                    <p> {title_authors} \n </p>
+                    <p>Reading papers everyday, keep innocence away 🙌 </p>
+                    <p> </p>
+                    <p>Best, </p>
+                    <p>Daily ArXiv </p>
+                <body>
+            </html>            
+            """
+            
             smtp_server = "smtp.gmail.com"                # SMTP server address, e.g., Gmail: smtp.gmail.com
             smtp_port = 587                                 # SMTP port, e.g., Gmail: 587
 
