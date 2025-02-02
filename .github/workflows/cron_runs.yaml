@@ -39,12 +39,15 @@ jobs:
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
     - name: commit change to git repo
       run: |
         git add .
         git commit -m "Auto-generated file update" || echo "No changes to commit"
         # git push origin main
         git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+        python send_mail.py
+        
     - name: Upload results
       uses: actions/upload-artifact@v4
       with:
