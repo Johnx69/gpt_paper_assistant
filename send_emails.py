@@ -64,7 +64,7 @@ def send_email(sender_email, sender_password, recipient_emails, subject, body, s
     finally:
         server.quit()
 
-if __name__ == __main__:
+if __name__ == "__main__":
     config = configparser.ConfigParser()
     config.read("configs/config.ini")
 
