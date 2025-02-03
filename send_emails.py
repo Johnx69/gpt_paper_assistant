@@ -83,14 +83,9 @@ if __name__ == "__main__":
         if config["EMAIL"].getboolean("push_to_email"):
             email = config["EMAIL"]
             sender_email = email['send_email']        # sender email
-            sender_password = os.environ.get("OAI_KEY") # sender passwd
+            sender_password = os.environ.get("EMAIL_KEY") # sender passwd
             
             recipient_email_list = email['receve_emails'].split(', ')
-            
-            if sender_password is not None:
-                print("Sender_password is not None!")
-            else:
-                print("Sender_password is None!")
             
             subject = f"Daily ArXiv: {datetime.today().strftime('%m/%d/%Y')}"
             paper_len = len(selected_papers)
