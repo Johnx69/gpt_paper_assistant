@@ -107,6 +107,7 @@ if __name__ == "__main__":
                 <body>
             </html>            
             """
+            print(f"body: {body}")
             
             smtp_server = "smtp.gmail.com"                # SMTP server address, e.g., Gmail: smtp.gmail.com
             smtp_port = 587                                 # SMTP port, e.g., Gmail: 587
