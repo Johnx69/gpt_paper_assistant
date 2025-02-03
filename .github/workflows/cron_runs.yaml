@@ -2,35 +2,59 @@ name: Run daily arxiv
 
 on:
   schedule:
-    - cron: "0 2 * * *"
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '0 2 * * *'
   workflow_dispatch:
-
-permissions:
-  contents: read
+  
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.10"
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Run main
-        env:
-          OAI_KEY: ${{ secrets.OAI_KEY }}
-          SLACK_KEY: ${{ secrets.SLACK_KEY }}
-          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
-        run: |
-          python main.py
-      - name: Upload results
-        uses: actions/upload-artifact@v4
-        with:
-          name: arxiv-scanner-outputs
-          path: out/
-          retention-days: 5
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false # forbid id credentials
+        
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Run main
+      env:
+        OAI_KEY: ${{ secrets.OAI_KEY }}
+        SLACK_KEY: ${{ secrets.SLACK_KEY }}
+        SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+      run: |
+        python main.py
+        
+    - name: Config the user information
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
+    - name: commit change to git repo
+      env:
+        EMAIL_KEY: ${{ secrets.EMAIL_KEY }}
+      run: |
+        git add .
+        git commit -m "Auto-generated file update" || echo "No changes to commit"
+        # git push origin main
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+        python send_emails.py
+        
+    - name: Upload results
+      uses: actions/upload-artifact@v4
+      with:
+        name: arxiv-scanner-outputs
+        # pattern: arxiv-scanner-outputs-*
+        merge-multiple: true
+        path: out/
+        retention-days: 5
