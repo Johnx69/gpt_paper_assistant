@@ -40,20 +40,27 @@ jobs:
       with:
        token: ${{ secrets.GITHUB_TOKEN }}
        file: output.md
+    - name: Archive artifact with fixed permissions
+      if: steps.check_files.outputs.files_exists == 'true'
+      shell: sh
+      run: |
+        echo "Fixing file permissions in dist..."
+        chmod -c -R +rX dist | while read line; do
+          echo "::warning title=Invalid file permissions automatically fixed::$line"
+        done
+        echo "Archiving dist directory..."
+        tar --dereference --hard-dereference \
+            --directory "dist" \
+            -cvf "$RUNNER_TEMP/artifact.tar" \
+            --exclude=.git --exclude=.github \
+            .
+        echo "Archive created at $RUNNER_TEMP/artifact.tar"
     - uses: actions/upload-artifact@v4
       if: steps.check_files.outputs.files_exists == 'true'
       with:
-        path: dist
+        # path: dist
+        path: ${{ runner.temp }}/artifact.tar
         name: github-pages
-    - run: chmod -c -R +rX dist
-    - run: rm target/doc/.lock
-    # - name: Download and list artifact
-    #   uses: actions/download-artifact@v4
-    #   with:
-    #     name: github-pages
-    #     path: downloaded_artifact
-    # - name: List downloaded artifact files
-    #   run: ls -al downloaded_artifact
     - uses: actions/deploy-pages@v4
       if: steps.check_files.outputs.files_exists == 'true'
       id: deployment
