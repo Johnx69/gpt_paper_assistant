@@ -30,7 +30,6 @@ jobs:
     - name: Run main
       env:
         OAI_KEY: ${{ secrets.OAI_KEY }}
-        EMAIL_KEY: ${{ secrets.EMAIL_KEY }}
         SLACK_KEY: ${{ secrets.SLACK_KEY }}
         SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
       run: |
@@ -42,6 +41,8 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         
     - name: commit change to git repo
+      env:
+        EMAIL_KEY: ${{ secrets.EMAIL_KEY }}
       run: |
         git add .
         git commit -m "Auto-generated file update" || echo "No changes to commit"
