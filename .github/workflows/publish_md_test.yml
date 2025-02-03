@@ -45,14 +45,14 @@ jobs:
       with:
         path: dist
         name: github-pages
-    - name: Download and list artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: github-pages
-        path: downloaded_artifact
-    - name: List downloaded artifact files
-      run: ls -al downloaded_artifact
-    - uses: actions/deploy-pages@v3
+    # - name: Download and list artifact
+    #   uses: actions/download-artifact@v4
+    #   with:
+    #     name: github-pages
+    #     path: downloaded_artifact
+    # - name: List downloaded artifact files
+    #   run: ls -al downloaded_artifact
+    - uses: actions/deploy-pages@v4
       if: steps.check_files.outputs.files_exists == 'true'
       id: deployment
     
