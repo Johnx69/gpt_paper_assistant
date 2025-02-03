@@ -1,4 +1,4 @@
-name: Publish output MD to GitHub Pages
+name: Publish output MD to github pages
 
 on:
   workflow_dispatch:
@@ -6,6 +6,7 @@ on:
     workflows: ["Run daily arxiv"]
     types:
       - completed
+
 
 permissions: write-all
 
@@ -15,41 +16,52 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-
+    outputs:
+      file-exists: ${{steps.file-check.outputs.file_exists}}
     steps:
-      - uses: actions/checkout@v3
-
-      # Download artifact from the *same* workflow name/file as in the first workflow
-      - name: Download artifact
-        id: download-artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          # If your first workflow file is actually named "cron_runs.yaml", keep it:
-          workflow: "cron_runs.yaml"
-          workflow_conclusion: success
-          name: arxiv-scanner-outputs
-
-      - name: Display structure of downloaded files
-        run: ls -R
-
-      - name: Check for output.md
-        id: check_files
-        uses: andstor/file-existence-action@v2
-        with:
-          files: output.md
-
-      - name: Convert output.md to pages
-        uses: wranders/markdown-to-pages-action@v0.1
-        if: steps.check_files.outputs.files_exists == 'true'
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          file: output.md
-
-      - uses: actions/upload-pages-artifact@v3
-        if: steps.check_files.outputs.files_exists == 'true'
-        with:
-          path: dist
-
-      - uses: actions/deploy-pages@v1
-        if: steps.check_files.outputs.files_exists == 'true'
-        id: deployment
+    - uses: actions/checkout@v4
+    - name: Download artifact
+      id: download-artifact
+      uses: dawidd6/action-download-artifact@v2
+      with:
+        workflow: cron_runs.yaml
+        workflow_conclusion: success
+        name: arxiv-scanner-outputs
+    - name: Display structure of downloaded files
+      run: ls -R
+    - name: Check for output.md
+      id: check_files
+      uses: andstor/file-existence-action@v2
+      with:
+        files: output.md
+    - name: Convert output.md to pages
+      uses: wranders/markdown-to-pages-action@v0.1
+      if: steps.check_files.outputs.files_exists == 'true'
+      with:
+       token: ${{ secrets.GITHUB_TOKEN }}
+       file: output.md
+    - name: Archive artifact with fixed permissions
+      if: steps.check_files.outputs.files_exists == 'true'
+      shell: sh
+      run: |
+        echo "Fixing file permissions in dist..."
+        chmod -c -R +rX dist | while read line; do
+          echo "::warning title=Invalid file permissions automatically fixed::$line"
+        done
+        echo "Archiving dist directory..."
+        tar --dereference --hard-dereference \
+            --directory "dist" \
+            -cvf "$RUNNER_TEMP/artifact.tar" \
+            --exclude=.git --exclude=.github \
+            .
+        echo "Archive created at $RUNNER_TEMP/artifact.tar"
+    - uses: actions/upload-artifact@v4
+      if: steps.check_files.outputs.files_exists == 'true'
+      with:
+        # path: dist
+        path: ${{ runner.temp }}/artifact.tar
+        name: github-pages
+    - uses: actions/deploy-pages@v4
+      if: steps.check_files.outputs.files_exists == 'true'
+      id: deployment
+    
