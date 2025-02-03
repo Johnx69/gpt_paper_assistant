@@ -114,7 +114,7 @@ if __name__ == "__main__":
             </html>            
             """
             # print(f"body: {body}")
-            print(f"password: {sender_password}, recipient_email_list: {recipient_email_list}, subject: {subject}, attachment: {attachment_path}")
+            print(f"recipient_email_list: {recipient_email_list}, subject: {subject}, attachment: {attachment_path}")
             
             smtp_server = "smtp.gmail.com"                # SMTP server address, e.g., Gmail: smtp.gmail.com
             smtp_port = 587                                 # SMTP port, e.g., Gmail: 587
