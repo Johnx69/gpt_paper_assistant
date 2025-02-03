@@ -41,11 +41,11 @@ jobs:
        token: ${{ secrets.GITHUB_TOKEN }}
        file: output.md
     - uses: actions/upload-artifact@v4
-      if: steps.check_files.outputs.files_exists == 'true'
+      # if: steps.check_files.outputs.files_exists == 'true'
       with:
         path: dist
         name: github-pages
     - uses: actions/deploy-pages@v3
-      if: steps.check_files.outputs.files_exists == 'true'
+      # if: steps.check_files.outputs.files_exists == 'true'
       id: deployment
     
