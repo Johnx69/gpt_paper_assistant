@@ -40,16 +40,12 @@ jobs:
       with:
        token: ${{ secrets.GITHUB_TOKEN }}
        file: output.md
-    - name: Create non-linked copy of dist
-      run: |
-        rm -rf non_linked_dist
-        mkdir non_linked_dist
-        rsync -avL dist/ non_linked_dist/
     - uses: actions/upload-artifact@v4
       if: steps.check_files.outputs.files_exists == 'true'
       with:
-        path: non_linked_dist
+        path: dist
         name: github-pages
+    - run: chmod -c -R +rX dist
     # - name: Download and list artifact
     #   uses: actions/download-artifact@v4
     #   with:
