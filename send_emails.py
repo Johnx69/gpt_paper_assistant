@@ -85,7 +85,7 @@ if __name__ == "__main__":
         if config["EMAIL"].getboolean("push_to_email"):
             email = config["EMAIL"]
             sender_email = email['send_email']        # sender email
-            sender_password = os.environ.get("NEW_EMAIL_KEY") # sender passwd
+            sender_password = os.environ.get("EMAIL_KEY") # sender passwd
             recipient_email_list = email['receve_emails'].split(', ')
     
             subject = f"Daily ArXiv: {datetime.today().strftime('%m/%d/%Y')}"
@@ -113,8 +113,6 @@ if __name__ == "__main__":
                 <body>
             </html>            
             """
-            # print(f"body: {body}")
-            print(f"recipient_email_list: {recipient_email_list}, subject: {subject}, attachment: {attachment_path}")
             
             smtp_server = "smtp.gmail.com"                # SMTP server address, e.g., Gmail: smtp.gmail.com
             smtp_port = 587                                 # SMTP port, e.g., Gmail: 587
