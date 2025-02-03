@@ -85,7 +85,7 @@ if __name__ == "__main__":
         if config["EMAIL"].getboolean("push_to_email"):
             email = config["EMAIL"]
             sender_email = email['send_email']        # sender email
-            sender_password = os.environ.get("EMAIL_KEY") # sender passwd
+            sender_password = os.environ.get("NEW_EMAIL_KEY") # sender passwd
             recipient_email_list = email['receve_emails'].split(', ')
     
             subject = f"Daily ArXiv: {datetime.today().strftime('%m/%d/%Y')}"
