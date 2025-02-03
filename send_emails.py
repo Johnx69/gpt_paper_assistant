@@ -59,6 +59,8 @@ def send_email(sender_email, sender_password, recipient_emails, subject, body, s
         server = smtplib.SMTP(smtp_server, smtp_port)
         server.starttls()  # Enable secure connection
         print("log in")
+        if sender_password is not None:
+            print("sender_password is not None!")
         server.login(sender_email, sender_password)
         
         # Send the email
