@@ -43,12 +43,14 @@ def send_email(sender_email, sender_password, recipient_emails, subject, body, s
                 with open(attachment, 'rb') as file:
                     part = MIMEBase('application', 'octet-stream')
                     part.set_payload(file.read())
+                print("encode attachment")
                 encoders.encode_base64(part)
                 part.add_header(
                     'Content-Disposition',
                     f'attachment; filename="{attachment.split("/")[-1]}"'
                 )
                 message.attach(part)
+                
             except FileNotFoundError:
                 print(f"Attachment not found: {attachment}")
                 return
@@ -56,9 +58,11 @@ def send_email(sender_email, sender_password, recipient_emails, subject, body, s
         # Connect to the SMTP server
         server = smtplib.SMTP(smtp_server, smtp_port)
         server.starttls()  # Enable secure connection
+        print("log in")
         server.login(sender_email, sender_password)
-
+        
         # Send the email
+        print("send email")
         server.sendmail(sender_email, recipient_emails, message.as_string())
         print(f"Email sent successfully to: {', '.join(recipient_emails)}")
     except Exception as e:
@@ -107,7 +111,8 @@ if __name__ == "__main__":
                 <body>
             </html>            
             """
-            print(f"body: {body}")
+            # print(f"body: {body}")
+            print(f"password: {sender_password}, recipient_email_list: {recipient_email_list}, subject: {subject}, attachment: {attachment_path}")
             
             smtp_server = "smtp.gmail.com"                # SMTP server address, e.g., Gmail: smtp.gmail.com
             smtp_port = 587                                 # SMTP port, e.g., Gmail: 587
